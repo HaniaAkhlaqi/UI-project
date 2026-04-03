@@ -267,58 +267,80 @@ class MenuModel:
             # === DESSERTS ===
             {
                 "id": "d1", "category": "desserts",
-                "name": {"en": "Mango Sticky Rice", "de": "Mango-Klebreis", "zh": "芒果糯米饭"},
+                "name": {"en": "Kladdkaka", "de": "Schwedischer Schokoladenkuchen", "zh": "瑞典黏巧克力蛋糕"},
                 "description": {
-                    "en": "Sweet sticky rice with fresh mango and coconut cream",
-                    "de": "Süßer Klebreis mit frischer Mango und Kokosnusscreme",
-                    "zh": "甜糯米配新鲜芒果和椰奶"
+                    "en": "Sticky Swedish chocolate cake served with green tea ice cream",
+                    "de": "Klebriger schwedischer Schokoladenkuchen mit Grüntee-Eis",
+                    "zh": "瑞典黏巧克力蛋糕配抹茶冰淇淋"
                 },
-                "price": 8.50, "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free"],
-                "allergens": [], "origin": "Thailand", "contains_alcohol": False
+                "price": 7.50, "tags": ["vegetarian"],
+                "allergens": ["gluten", "lactose", "egg"], "origin": "Sweden", "contains_alcohol": False
             },
             {
                 "id": "d2", "category": "desserts",
-                "name": {"en": "Apfelstrudel", "de": "Apfelstrudel", "zh": "苹果卷"},
+                "name": {"en": "Äppelkaka (Vegan)", "de": "Veganer Apfelkuchen", "zh": "纯素苹果蛋糕"},
                 "description": {
-                    "en": "Warm apple strudel with vanilla sauce and whipped cream",
-                    "de": "Warmer Apfelstrudel mit Vanillesauce und Schlagsahne",
-                    "zh": "温热苹果卷配香草酱和鲜奶油"
+                    "en": "Vegan apple cake with cinnamon and light ginger sauce",
+                    "de": "Veganer Apfelkuchen mit Zimt und Ingwersauce",
+                    "zh": "纯素苹果蛋糕配肉桂和姜汁"
                 },
-                "price": 7.90, "tags": ["vegetarian"],
-                "allergens": ["gluten", "lactose"], "origin": "Germany", "contains_alcohol": False
+                "price": 6.90, "tags": ["vegan", "lactose-free"],
+                "allergens": ["gluten"], "origin": "Sweden", "contains_alcohol": False
             },
             {
                 "id": "d3", "category": "desserts",
-                "name": {"en": "Flambéed Banana", "de": "Flambierte Banane", "zh": "火焰香蕉"},
+                "name": {"en": "Kanelbullar (Gluten-Free)", "de": "Glutenfreie Zimtschnecken", "zh": "无麸质肉桂卷"},
                 "description": {
-                    "en": "Caramelized banana flambéed with rum, served with ice cream (contains alcohol)",
-                    "de": "Karamellisierte Banane mit Rum flambiert, serviert mit Eis (enthält Alkohol)",
-                    "zh": "焦糖香蕉配朗姆酒火焰，配冰淇淋（含酒精）"
+                    "en": "Gluten-free cinnamon bun with black sesame filling",
+                    "de": "Glutenfreie Zimtschnecke mit schwarzer Sesamfüllung",
+                    "zh": "无麸质肉桂卷配黑芝麻馅"
                 },
-                "price": 9.50, "tags": ["vegetarian", "gluten-free"],
-                "allergens": ["lactose"], "origin": "International", "contains_alcohol": True
+                "price": 5.90, "tags": ["vegetarian", "gluten-free"],
+                "allergens": ["lactose"], "origin": "Sweden", "contains_alcohol": False
             },
             {
                 "id": "d4", "category": "desserts",
-                "name": {"en": "Red Bean Mochi", "de": "Rote-Bohnen-Mochi", "zh": "红豆麻糬"},
+                "name": {"en": "Prinsesstårta", "de": "Prinzessinnentorte", "zh": "公主蛋糕"},
                 "description": {
-                    "en": "Soft rice cake filled with sweet red bean paste",
-                    "de": "Weiches Reisküchlein gefüllt mit süßer roter Bohnenpaste",
-                    "zh": "软糯麻糬配甜红豆沙"
+                    "en": "Layered sponge cake with mango cream and marzipan",
+                    "de": "Schichtkuchen mit Mangocreme und Marzipan",
+                    "zh": "夹层蛋糕配芒果奶油和杏仁糖皮"
                 },
-                "price": 6.50, "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free"],
-                "allergens": [], "origin": "Japan", "contains_alcohol": False
+                "price": 8.90, "tags": ["vegetarian"],
+                "allergens": ["gluten", "lactose", "egg", "nuts"], "origin": "Sweden", "contains_alcohol": False
             },
             {
                 "id": "d5", "category": "desserts",
-                "name": {"en": "Schwarzwälder Kirschtorte", "de": "Schwarzwälder Kirschtorte", "zh": "黑森林蛋糕"},
+                "name": {"en": "Havreflarn (Vegan)", "de": "Vegane Haferkekse", "zh": "纯素燕麦薄脆饼"},
                 "description": {
-                    "en": "Black Forest cherry cake with kirsch liqueur (contains alcohol)",
-                    "de": "Schwarzwälder Kirschtorte mit Kirschwasser (enthält Alkohol)",
-                    "zh": "黑森林樱桃蛋糕配樱桃白兰地（含酒精）"
+                    "en": "Vegan oat crisps dipped in dark chocolate with chili",
+                    "de": "Vegane Haferkekse mit dunkler Schokolade und Chili",
+                    "zh": "纯素燕麦脆饼配黑巧克力和微辣味"
                 },
-                "price": 8.90, "tags": ["vegetarian"],
-                "allergens": ["gluten", "lactose"], "origin": "Germany", "contains_alcohol": True
+                "price": 4.90, "tags": ["vegan", "lactose-free"],
+                "allergens": ["gluten"], "origin": "Sweden", "contains_alcohol": False
+            },
+            {
+                "id": "d6", "category": "desserts",
+                "name": {"en": "Swedish Pancakes (Lactose-Free)", "de": "Laktosefreie Pfannkuchen", "zh": "无乳糖瑞典薄煎饼"},
+                "description": {
+                    "en": "Thin pancakes with red bean paste and lactose-free cream",
+                    "de": "Pfannkuchen mit roter Bohnenpaste und laktosefreier Creme",
+                    "zh": "薄煎饼配红豆沙和无乳糖奶油"
+                },
+                "price": 6.50, "tags": ["vegetarian", "lactose-free"],
+                "allergens": ["gluten", "egg"], "origin": "Sweden", "contains_alcohol": False
+            },
+            {
+                "id": "d7", "category": "desserts",
+                "name": {"en": "Berry Sorbet", "de": "Beerensorbet", "zh": "浆果雪葩"},
+                "description": {
+                    "en": "Refreshing berry sorbet with lychee and mint",
+                    "de": "Erfrischendes Beerensorbet mit Litschi und Minze",
+                    "zh": "清爽浆果雪葩配荔枝和薄荷"
+                },
+                "price": 5.50, "tags": ["vegan", "gluten-free", "lactose-free"],
+                "allergens": [], "origin": "Sweden", "contains_alcohol": False
             },
             # === BEVERAGES ===
             {
@@ -419,33 +441,101 @@ class MenuModel:
         self.set_meals = [
             {
                 "id": "set2a", "category": "set_meals",
-                "name": {"en": "Dragon Set (2-Course)", "de": "Drachen-Menü (2-Gänge)", "zh": "龙套餐（两道菜）"},
+                "name": {"en": "Lotus Set", "de": "Lotus-Menü", "zh": "莲花套餐"},
                 "description": {
-                    "en": "Choose 1 starter + 1 main course. Includes jasmine tea.",
-                    "de": "Wählen Sie 1 Vorspeise + 1 Hauptgericht. Inklusive Jasmintee.",
-                    "zh": "选1道前菜 + 1道主菜。包含茉莉花茶。"
+                    "en": "Spring Rolls + Veggie Stir-Fry + Berry Sorbet + Jasmine Tea",
+                    "de": "Frühlingsrollen + Gemüsepfanne + Beerensorbet + Jasmintee",
+                    "zh": "春卷 + 素菜炒时蔬 + 浆果雪葩 + 茉莉花茶"
                 },
-                "price": 24.90, "tags": [], "allergens": [], "origin": "", "contains_alcohol": False
-            },
-            {
-                "id": "set3a", "category": "set_meals",
-                "name": {"en": "Emperor Set (3-Course)", "de": "Kaiser-Menü (3-Gänge)", "zh": "皇帝套餐（三道菜）"},
-                "description": {
-                    "en": "Choose 1 starter + 1 main course + 1 dessert. Includes jasmine tea.",
-                    "de": "Wählen Sie 1 Vorspeise + 1 Hauptgericht + 1 Dessert. Inklusive Jasmintee.",
-                    "zh": "选1道前菜 + 1道主菜 + 1道甜点。包含茉莉花茶。"
-                },
-                "price": 32.90, "tags": [], "allergens": [], "origin": "", "contains_alcohol": False
+                "price": 23.90,
+                "tags": ["vegan", "vegetarian", "lactose-free", "non-alcoholic"],
+                "allergens": ["gluten", "soy"],
+                "origin": "Fusion",
+                "contains_alcohol": False
             },
             {
                 "id": "set2b", "category": "set_meals",
-                "name": {"en": "Phoenix Set (2-Course)", "de": "Phönix-Menü (2-Gänge)", "zh": "凤凰套餐（两道菜）"},
+                "name": {"en": "Bamboo Set", "de": "Bambus-Menü", "zh": "竹套餐"},
                 "description": {
-                    "en": "Choose 1 soup + 1 main course. Includes sparkling water.",
-                    "de": "Wählen Sie 1 Suppe + 1 Hauptgericht. Inklusive Sprudel.",
-                    "zh": "选1道汤 + 1道主菜。包含气泡水。"
+                    "en": "Edamame + Kung Pao Chicken + Berry Sorbet + Sparkling Water",
+                    "de": "Edamame + Kung-Pao-Hühnchen + Beerensorbet + Sprudel",
+                    "zh": "毛豆 + 宫保鸡丁 + 浆果雪葩 + 气泡水"
                 },
-                "price": 22.90, "tags": [], "allergens": [], "origin": "", "contains_alcohol": False
+                "price": 25.90,
+                "tags": ["gluten-free", "lactose-free", "non-alcoholic"],
+                "allergens": ["peanuts"],
+                "origin": "Fusion",
+                "contains_alcohol": False
+            },
+            {
+                "id": "set2c", "category": "set_meals",
+                "name": {"en": "Golden Duck Set", "de": "Goldenes-Enten-Menü", "zh": "金鸭套餐"},
+                "description": {
+                    "en": "Peking Duck Pancakes + Peking Duck (Half) + Kladdkaka + Jasmine Tea",
+                    "de": "Peking-Ente Pfannkuchen + Peking-Ente (Halbe) + Schwedischer Schokoladenkuchen + Jasmintee",
+                    "zh": "北京烤鸭薄饼 + 半只北京烤鸭 + 瑞典黏巧克力蛋糕 + 茉莉花茶"
+                },
+                "price": 39.90,
+                "tags": ["non-alcoholic"],
+                "allergens": ["gluten", "lactose", "egg"],
+                "origin": "Fusion",
+                "contains_alcohol": False
+            },
+            {
+                "id": "set3b", "category": "set_meals",
+                "name": {"en": "Jade Vegan Set", "de": "Jade Veganes Menü", "zh": "翡翠纯素套餐"},
+                "description": {
+                    "en": "Edamame + Miso Soup + Mapo Tofu (Vegan) + Berry Sorbet + Lychee Lemonade",
+                    "de": "Edamame + Miso-Suppe + Mapo Tofu (Vegan) + Beerensorbet + Litschi-Limonade",
+                    "zh": "毛豆 + 味噌汤 + 素麻婆豆腐 + 浆果雪葩 + 荔枝柠檬水"
+                },
+                "price": 28.90,
+                "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"],
+                "allergens": ["soy"],
+                "origin": "Fusion",
+                "contains_alcohol": False
+            },
+            {
+                "id": "set3c", "category": "set_meals",
+                "name": {"en": "Spicy Sichuan Set", "de": "Scharfes Sichuan-Menü", "zh": "川味香辣套餐"},
+                "description": {
+                    "en": "Hot & Sour Soup + Kung Pao Chicken + Berry Sorbet + Jasmine Tea",
+                    "de": "Scharf-Saure Suppe + Kung-Pao-Hühnchen + Beerensorbet + Jasmintee",
+                    "zh": "酸辣汤 + 宫保鸡丁 + 浆果雪葩 + 茉莉花茶"
+                },
+                "price": 26.90,
+                "tags": ["lactose-free"],
+                "allergens": ["soy", "peanuts"],
+                "origin": "China",
+                "contains_alcohol": False
+            },
+            {
+                "id": "set3d", "category": "set_meals",
+                "name": {"en": "Imperial Duck Set", "de": "Imperiales Enten-Menü", "zh": "御品烤鸭套餐"},
+                "description": {
+                    "en": "Peking Duck Pancakes + Peking Duck (Half) + Kladdkaka + Jasmine Tea",
+                    "de": "Peking-Ente Pfannkuchen + Peking-Ente (Halbe) + Schwedischer Schokoladenkuchen + Jasmintee",
+                    "zh": "北京烤鸭薄饼 + 半只北京烤鸭 + 瑞典黏巧克力蛋糕 + 茉莉花茶"
+                },
+                "price": 39.90,
+                "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"],
+                "allergens": ["gluten", "lactose", "egg"],
+                "origin": "Fusion",
+                "contains_alcohol": False
+            },
+            {
+                "id": "set3e", "category": "set_meals",
+                "name": {"en": "Bavarian Fusion Set", "de": "Bayerisches Fusions-Menü", "zh": "巴伐利亚融合套餐"},
+                "description": {
+                    "en": "Bavarian Pretzel Bites + Schweinshaxe + Swedish Pancakes (Lactose-Free) + Sparkling Water",
+                    "de": "Bayerische Brezel-Happen + Schweinshaxe + Laktosefreie Pfannkuchen + Sprudel",
+                    "zh": "巴伐利亚椒盐脆饼 + 德式烤猪肘 + 无乳糖瑞典薄煎饼 + 气泡水"
+                },
+                "price": 31.90,
+                "tags": ["vegetarian", "lactose-free", "vegan", "non-alcoholic"],
+                "allergens": ["gluten", "lactose", "egg"],
+                "origin": "Germany",
+                "contains_alcohol": False
             },
         ]
 
