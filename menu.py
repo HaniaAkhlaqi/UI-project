@@ -430,6 +430,24 @@ class MenuModel:
                 },
                 "price": 3.90, "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"],
                 "allergens": [], "origin": "USA", "contains_alcohol": False
+            },{
+                "id": "ts1",
+                "category": "todays_special",
+                "name": {
+                    "en": "🌟 Peking Duck Feast for Two",
+                    "de": "🌟 Peking-Enten-Festmahl für Zwei",
+                    "zh": "🌟 双人北京烤鸭盛宴"
+                },
+                "description": {
+                    "en": "Whole Peking duck with pancakes, hoisin sauce, cucumber, scallions, and jasmine tea for two.",
+                    "de": "Ganze Peking-Ente mit Pfannkuchen, Hoisin-Sauce, Gurke, Frühlingszwiebeln und Jasmintee für zwei Personen.",
+                    "zh": "整只北京烤鸭配薄饼、海鲜酱、黄瓜、葱和双人茉莉花茶。"
+                },
+                "price": 58.90,
+                "tags": ["non-alcoholic"],
+                "allergens": ["gluten"],
+                "origin": "China",
+                "contains_alcohol": False
             },
         ]
 
