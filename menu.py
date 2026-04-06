@@ -18,7 +18,7 @@ Features:
 - 3 dynamically changeable languages (English, German, Chinese)
 - Call for service button
 - Order cost display with optional tipping
-- Responsive design for tablet (9") and phone screens 
+- Responsive design for tablet (9") and phone screens
 
 Author: Generated for UI Programming Course Project- Baseline lovable Hi-Fi prototype
 """
@@ -641,6 +641,7 @@ class MenuModel:
             "en": {
                 "app_title": "Gasthaus Peking Duck",
                 "app_subtitle": "German-Chinese Fusion Cuisine",
+                "starters": "Starters", "soups": "Soups & Light Courses",
                 "starters": "Starters", "soups": "Soups",
                 "mains": "Main Courses", "desserts": "Desserts",
                 "beverages": "Beverages", "set_meals": "Set Meals",
@@ -679,6 +680,7 @@ class MenuModel:
             "de": {
                 "app_title": "Gasthaus Peking Duck",
                 "app_subtitle": "Deutsch-Chinesische Fusionsküche",
+                "starters": "Vorspeisen", "soups": "Suppen & Leichte Gerichte",
                 "starters": "Vorspeisen", "soups": "Suppen ",
                 "mains": "Hauptgerichte", "desserts": "Nachspeisen",
                 "beverages": "Getränke", "set_meals": "Menüs",
@@ -1224,6 +1226,8 @@ class MenuView:
         self.root.grid_rowconfigure(0, weight=0)  # Header
         self.root.grid_rowconfigure(1, weight=1)  # Main content
         self.root.grid_columnconfigure(0, weight=1)
+        # Bind the resize event to handle responsive layout switching
+        self.root.bind("<Configure>", self._handle_responsiveness)
 
     def _setup_styles(self):
         """Configure ttk styles for consistent theming."""
@@ -1333,6 +1337,8 @@ class MenuView:
     def _build_menu_panel(self):
         """
         Build the left menu panel with:
+        - Filter bar (Horizontally scrollable with visible scrollbar)
+        - Category buttons (Horizontally scrollable with visible scrollbar)
         - Filter bar (dietary toggles)
         - Category buttons
         - Scrollable item card area
@@ -1340,6 +1346,45 @@ class MenuView:
         self.menu_frame.grid_rowconfigure(2, weight=1)
         self.menu_frame.grid_columnconfigure(0, weight=1)
 
+        # --- 1. Filter Bar (Visible Scrollbar Setup) ---
+        self.filter_wrapper = tk.Frame(self.menu_frame, bg=self.COLORS["bg_panel"])
+        self.filter_wrapper.grid(row=0, column=0, sticky="ew")
+        self.filter_wrapper.grid_columnconfigure(0, weight=1)
+
+        self.filter_canvas = tk.Canvas(self.filter_wrapper, bg=self.COLORS["bg_panel"], highlightthickness=0, height=40)
+        self.filter_scrollbar = ttk.Scrollbar(self.filter_wrapper, orient=tk.HORIZONTAL, command=self.filter_canvas.xview)
+        self.filter_canvas.configure(xscrollcommand=self.filter_scrollbar.set)
+        
+        self.filter_frame = tk.Frame(self.filter_canvas, bg=self.COLORS["bg_panel"], pady=6, padx=8)
+        self.filter_canvas.create_window((0, 0), window=self.filter_frame, anchor="nw")
+        
+        self.filter_canvas.grid(row=0, column=0, sticky="ew")
+        self.filter_scrollbar.grid(row=1, column=0, sticky="ew")
+        
+        self.filter_frame.bind("<Configure>", lambda e: self.filter_canvas.configure(scrollregion=self.filter_canvas.bbox("all")))
+
+        self._build_filters()
+
+        # --- 2. Category Buttons Row (Visible Scrollbar Setup) ---
+        self.cat_wrapper = tk.Frame(self.menu_frame, bg=self.COLORS["bg_dark"])
+        self.cat_wrapper.grid(row=1, column=0, sticky="ew")
+        self.cat_wrapper.grid_columnconfigure(0, weight=1)
+
+        self.cat_canvas = tk.Canvas(self.cat_wrapper, bg=self.COLORS["bg_dark"], highlightthickness=0, height=40)
+        self.cat_scrollbar = ttk.Scrollbar(self.cat_wrapper, orient=tk.HORIZONTAL, command=self.cat_canvas.xview)
+        self.cat_canvas.configure(xscrollcommand=self.cat_scrollbar.set)
+        
+        self.cat_frame = tk.Frame(self.cat_canvas, bg=self.COLORS["bg_dark"], pady=4, padx=4)
+        self.cat_canvas.create_window((0, 0), window=self.cat_frame, anchor="nw")
+        
+        self.cat_canvas.grid(row=0, column=0, sticky="ew")
+        self.cat_scrollbar.grid(row=1, column=0, sticky="ew")
+        
+        self.cat_frame.bind("<Configure>", lambda e: self.cat_canvas.configure(scrollregion=self.cat_canvas.bbox("all")))
+
+        self._build_category_buttons()
+
+        # --- 3. Menu Items Scroll Area (Existing Vertical Code) ---
         # Filter bar
         self.filter_frame = tk.Frame(self.menu_frame, bg=self.COLORS["bg_panel"], pady=6, padx=8)
         self.filter_frame.grid(row=0, column=0, sticky="ew")
@@ -1377,6 +1422,10 @@ class MenuView:
         self.menu_canvas.grid(row=0, column=0, sticky="nsew")
         self.menu_scrollbar.grid(row=0, column=1, sticky="ns")
 
+        self.menu_canvas.bind("<Configure>", self._on_menu_canvas_configure)
+        
+        # Vertical mouse wheel scrolling for main menu items
+        self.menu_canvas.bind_all("<MouseWheel>", lambda e: self.menu_canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
         # Make inner frame expand to canvas width
         self.menu_canvas.bind("<Configure>", self._on_menu_canvas_configure)
         
@@ -1398,6 +1447,7 @@ class MenuView:
         self.filter_label.pack(side=tk.LEFT, padx=(0, 8))
 
         self.filter_buttons = {}
+        filter_tags = ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"]
         filter_tags = ["vegan", "vegetarian", "gluten-free", "lactose-free", "seafood", "non-alcoholic"]
         for tag in filter_tags:
             btn = tk.Button(
@@ -1476,6 +1526,10 @@ class MenuView:
         self.people_count_label.pack(side=tk.RIGHT, padx=6)
 
         self.add_person_btn = tk.Button(
+            self.group_frame, text=self.model.t("add_person"), # Fixed: Using dynamic text instead of static "+"
+            font=("Arial", 10, "bold"),
+            bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
+            relief=tk.FLAT, cursor="hand2", padx=10, # Fixed: Removed fixed width=3 and added padx=10 for dynamic resizing
             self.group_frame, text="+",
             font=("Arial", 10, "bold"),
             bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
@@ -1623,6 +1677,12 @@ class MenuView:
         self.show_category(self.current_category)
 
     def refresh_order(self):
+        self._build_person_tabs()
+        self._render_order_items()
+        self._update_totals()
+        # Synchronize slide-in drawer if it is currently open
+        if hasattr(self, 'drawer_open') and self.drawer_open:
+            self._refresh_drawer_ui()
         """Refresh the order panel: person tabs, items, totals."""
         self._build_person_tabs()
         self._render_order_items()
@@ -1722,6 +1782,11 @@ class MenuView:
 
     def _render_menu_card(self, item):
         """
+        Render a single menu item as a styled, fully responsive card.
+        Includes dietary tags, allergens, and origin info.
+        """
+        lang = self.model.current_language
+        is_special = item.get("category") == "todays_special"
         Render a single menu item as a styled card with:
         - Name, price, description
         - Dietary tags as colored badges
@@ -1737,6 +1802,12 @@ class MenuView:
         card = tk.Frame(
             self.menu_inner, bg=self.COLORS["bg_card"],
             padx=12, pady=10, relief=tk.FLAT,
+            highlightbackground=self.COLORS["accent_gold"] if is_special else self.COLORS["bg_panel"],
+            highlightthickness=2 if is_special else 1
+        )
+        card.pack(fill=tk.X, padx=8, pady=4)
+
+        # Header Row: Name, Price and Add Button
             highlightbackground=self.COLORS["bg_panel"],
             highlightthickness=1
         )
@@ -1753,6 +1824,16 @@ class MenuView:
 
         name_text = item["name"].get(lang, item["name"]["en"])
         name_label = tk.Label(
+            top, text=name_text, font=("Georgia", 13, "bold"),
+            bg=self.COLORS["bg_card"], fg=self.COLORS["text_gold"] if is_special else self.COLORS["text_light"],
+            anchor="w", cursor="hand2", justify=tk.LEFT
+        )
+        name_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        add_btn = tk.Button(
+            top, text="+", font=("Arial", 12, "bold"),
+            bg=self.COLORS["success"], fg=self.COLORS["white"],
+            activebackground="#219a52", relief=tk.FLAT, cursor="hand2", width=3,
             top, text=name_text,
             font=("Georgia", 13, "bold"),
             bg=self.COLORS["bg_card"], fg=self.COLORS["text_light"],
@@ -1781,6 +1862,397 @@ class MenuView:
         )
         add_btn.pack(side=tk.RIGHT, padx=(8, 0))
 
+        price_label = tk.Label(
+            top, text=f"€{item['price']:.2f}", font=("Georgia", 13, "bold"),
+            bg=self.COLORS["bg_card"], fg=self.COLORS["text_gold"]
+        )
+        price_label.pack(side=tk.RIGHT)
+
+        # Description text
+        desc_text = item["description"].get(lang, item["description"]["en"])
+        desc_label = tk.Label(
+            card, text=desc_text, font=("Arial", 10),
+            bg=self.COLORS["bg_card"], fg=self.COLORS["text_muted"],
+            anchor="w", justify=tk.LEFT
+        )
+        desc_label.pack(fill=tk.X, pady=(4, 6))
+        
+        # Drag bindings for the whole card, title, and description
+        for widget in (card, name_label, desc_label):
+            widget.bind("<ButtonPress-1>", lambda e, i=item: self._on_drag_start(e, i))
+            widget.bind("<B1-Motion>", self._on_drag_motion)
+            widget.bind("<ButtonRelease-1>", self._on_drag_end)
+
+        # --- TAGS & METADATA SECTION (Fixed/Full implementation) ---
+        meta_frame = tk.Frame(card, bg=self.COLORS["bg_card"])
+        meta_frame.pack(fill=tk.X)
+        
+        # Tags (Vegan, Vegetarian, etc. - The "Yellow" parts)
+        tags_frame = tk.Frame(meta_frame, bg=self.COLORS["bg_card"])
+        tags_frame.pack(side=tk.LEFT)
+        
+        if item.get("tags"):
+            for tag in item["tags"]:
+                tk.Label(
+                    tags_frame, text=self.model.t(tag),
+                    font=("Arial", 8, "bold"),
+                    bg=self.TAG_COLORS.get(tag, self.COLORS["accent_gold"]),
+                    fg=self.COLORS["white"], padx=6, pady=2
+                ).pack(side=tk.LEFT, padx=(0, 4))
+                
+        # Alcohol Warning (Mandatory requirement)
+        if item.get("contains_alcohol"):
+            tk.Label(
+                tags_frame, text=self.model.t("contains_alcohol"),
+                font=("Arial", 8, "bold"), bg=self.COLORS["tag_alcohol"],
+                fg=self.COLORS["white"], padx=6, pady=2
+            ).pack(side=tk.LEFT, padx=(0, 4))
+
+        # Allergens & Origin info (The "Non-yellow" parts)
+        info_str = []
+        if item.get("allergens"):
+            info_str.append(f"{self.model.t('allergens')}: {', '.join(item['allergens'])}")
+        if item.get("origin"):
+            info_str.append(f"{self.model.t('origin')}: {item['origin']}")
+            
+        if info_str:
+            tk.Label(
+                meta_frame, text=" | ".join(info_str),
+                font=("Arial", 8, "italic"),
+                bg=self.COLORS["bg_card"], fg=self.COLORS["text_muted"]
+            ).pack(side=tk.RIGHT)
+
+        # Handle responsive wrapping
+        def on_card_resize(event, d_lbl=desc_label, n_lbl=name_label):
+            target_width = event.width - 30 
+            if target_width > 50:
+                d_lbl.configure(wraplength=target_width)
+                n_lbl.configure(wraplength=max(target_width - 120, 50))
+
+        card.bind("<Configure>", on_card_resize)
+
+    def _handle_responsiveness(self, event):
+        """Handles responsive layout and ensures header buttons do not overlap."""
+        if event.widget == self.root:
+            width = event.width
+            
+            # Identify the right-side frame in the header (contains languages & service button)
+            header = self.root.winfo_children()[0]
+            header_right_frame = None
+            for widget in header.winfo_children():
+                if isinstance(widget, tk.Frame) and len(widget.winfo_children()) >= 2:
+                    header_right_frame = widget
+                    break
+
+            if width < 850:
+                # --- Mobile View Adjustments ---
+                if self.order_frame in self.main_pane.panes():
+                    self.main_pane.forget(self.order_frame)
+                
+                self.main_pane.configure(sashwidth=0)
+                self.main_pane.paneconfigure(self.menu_frame, width=width, minsize=width)
+                
+                full_name = "🦆 " + self.model.t("app_title")
+                self.title_label.configure(
+                    text=full_name, font=("Georgia", 11, "bold"),
+                    wraplength=max(width - 240, 120), justify=tk.LEFT
+                )
+                self.subtitle_label.grid_remove()
+
+                # Safely reposition language and service buttons to make space for the Order button
+                if header_right_frame:
+                    header_right_frame.grid(row=0, column=1, sticky="e", padx=(0, 95)) 
+                    if hasattr(self, 'lang_buttons'):
+                        for btn in self.lang_buttons.values():
+                            btn.configure(font=("Arial", 8, "bold"), width=3)
+                    if hasattr(self, 'service_btn'):
+                        self.service_btn.configure(width=10, font=("Arial", 8, "bold"), padx=2)
+
+                # Order Button Logic (Visibility Management)
+                is_drawer_open = hasattr(self, 'drawer_open') and self.drawer_open
+                if not is_drawer_open:
+                    if not hasattr(self, 'mobile_cart_btn'):
+                        self._create_mobile_cart_button()
+                    else:
+                        self.mobile_cart_btn.place(relx=1.0, x=-8, y=10, anchor="ne")
+                        self.mobile_cart_btn.lift()
+                else:
+                    if hasattr(self, 'mobile_cart_btn'):
+                        self.mobile_cart_btn.place_forget()
+            
+            else:
+                # --- Desktop View Adjustments ---
+                self.main_pane.configure(sashwidth=4)
+                self.main_pane.paneconfigure(self.menu_frame, minsize=300, width=0)
+
+                if self.order_frame not in self.main_pane.panes():
+                    self.main_pane.add(self.order_frame, minsize=250, stretch="never")
+                
+                full_name = "🦆 " + self.model.t("app_title")
+                self.title_label.configure(text=full_name, font=("Georgia", 18, "bold"), wraplength=0)
+                self.subtitle_label.grid()
+
+                # Restore language and service buttons to normal desktop size
+                if header_right_frame:
+                    header_right_frame.grid(row=0, column=2, sticky="e", padx=(0, 10))
+                    if hasattr(self, 'lang_buttons'):
+                        for btn in self.lang_buttons.values():
+                            btn.configure(font=("Arial", 9, "bold"), width=4)
+                    if hasattr(self, 'service_btn'):
+                        self.service_btn.configure(width=15, font=("Arial", 9, "bold"), padx=10)
+
+                # Ensure mobile order button is hidden on desktop
+                if hasattr(self, 'mobile_cart_btn'):
+                    self.mobile_cart_btn.place_forget()
+
+    def _create_mobile_cart_button(self):
+        """Creates a  floating action button."""
+        premium_gold = "#D4AF37"
+        hover_gold = "#F1D570"
+        dark_text = "#111111"
+
+        self.mobile_cart_btn = tk.Button(
+            self.root, text="🛒 Order",
+            font=("Segoe UI", 10, "bold"),
+            bg=premium_gold, fg=dark_text,
+            activebackground=hover_gold, activeforeground=dark_text,
+            relief=tk.FLAT, borderwidth=0, highlightthickness=0,
+            cursor="hand2", padx=16, pady=6,
+            command=self._show_cart_popup
+        )
+        
+        # Hover Animation
+        self.mobile_cart_btn.bind("<Enter>", lambda e: self.mobile_cart_btn.configure(bg=hover_gold))
+        self.mobile_cart_btn.bind("<Leave>", lambda e: self.mobile_cart_btn.configure(bg=premium_gold))
+        
+        # Initial placement
+        self.mobile_cart_btn.place(relx=1.0, x=-12, y=38, anchor="ne")
+    def _show_cart_popup(self):
+        if hasattr(self, 'drawer_open') and self.drawer_open:
+            return
+
+        # Hide floating order button to prevent overlapping with drawer exit button
+        if hasattr(self, 'mobile_cart_btn'):
+            self.mobile_cart_btn.place_forget()
+
+        self.drawer_width = min(self.root.winfo_width(), 420) 
+        
+        if hasattr(self, 'drawer_frame') and self.drawer_frame.winfo_exists():
+            self.drawer_frame.destroy()
+
+        self.drawer_frame = tk.Frame(self.root, bg=self.COLORS["order_bg"], 
+                                   highlightbackground=self.COLORS["accent_gold"], 
+                                   highlightthickness=1)
+        
+        # Drawer Header Section
+        header = tk.Frame(self.drawer_frame, bg=self.COLORS["bg_panel"], padx=15, pady=12)
+        header.pack(fill=tk.X)
+        tk.Label(header, text=self.model.t("your_order"), font=("Georgia", 15, "bold"), 
+                 bg=self.COLORS["bg_panel"], fg=self.COLORS["text_gold"]).pack(side=tk.LEFT)
+        
+        # Exit icon (X) replaces the Order button position
+        tk.Button(header, text="✕", font=("Arial", 14, "bold"), bg=self.COLORS["bg_panel"], 
+                  fg="#ff6b6b", bd=0, cursor="hand2", activebackground=self.COLORS["bg_panel"],
+                  command=self._close_drawer).pack(side=tk.RIGHT)
+        
+        tk.Button(header, text=self.model.t("add_person"), font=("Arial", 9, "bold"), 
+                  bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"], 
+                  relief=tk.FLAT, cursor="hand2", padx=10, 
+                  command=self._show_add_person_dialog).pack(side=tk.RIGHT, padx=15)
+
+        self.drawer_tabs_frame = tk.Frame(self.drawer_frame, bg=self.COLORS["order_bg"], padx=5, pady=5)
+        self.drawer_tabs_frame.pack(fill=tk.X)
+
+        # Scrollable content area
+        container = tk.Frame(self.drawer_frame, bg=self.COLORS["order_bg"])
+        container.pack(fill=tk.BOTH, expand=True)
+        self.drawer_canvas = tk.Canvas(container, bg=self.COLORS["order_bg"], highlightthickness=0, yscrollincrement=12)
+        scrollbar = ttk.Scrollbar(container, orient="vertical", command=self.drawer_canvas.yview)
+        self.drawer_inner = tk.Frame(self.drawer_canvas, bg=self.COLORS["order_bg"])
+        self.drawer_inner.bind("<Configure>", lambda e: self.drawer_canvas.configure(scrollregion=self.drawer_canvas.bbox("all")))
+        self.drawer_canvas_window = self.drawer_canvas.create_window((0, 0), window=self.drawer_inner, anchor="nw", width=self.drawer_width-20)
+        self.drawer_canvas.configure(yscrollcommand=scrollbar.set)
+        self.drawer_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.drawer_canvas.bind_all("<MouseWheel>", self._on_drawer_mousewheel)
+
+        # Footer Area (Totals and Actions)
+        self.drawer_footer = tk.Frame(self.drawer_frame, bg=self.COLORS["bg_panel"], padx=15, pady=15)
+        self.drawer_footer.pack(fill=tk.X, side=tk.BOTTOM)
+
+        self._refresh_drawer_ui()
+
+        # Place drawer off-screen initially then animate in
+        
+        
+        self.drawer_open = True
+        self._show_overlay()
+        self.drawer_frame.place(relx=1.0, rely=0, relheight=1.0, width=self.drawer_width, x=self.drawer_width)
+        self.drawer_frame.lift()
+        self._animate_drawer_in(self.drawer_width)
+
+    def _on_drawer_mousewheel(self, event):
+        """Enables smooth mouse scrolling within the drawer"""
+        if hasattr(self, 'drawer_open') and self.drawer_open:
+            self.drawer_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+    def _show_overlay(self):
+        if hasattr(self, '_overlay') and self._overlay.winfo_exists():
+            self._overlay.destroy()
+        self._overlay = tk.Frame(self.root, bg="#000000")
+        self._overlay.place(x=0, y=0, relwidth=1.0, relheight=1.0)
+        self._overlay.lift()
+        self._overlay.bind("<Button-1>", lambda e: self._close_drawer())
+        tk.Label(self._overlay, text="🦆", font=("Segoe UI Emoji", 48),
+                 bg="#000000", fg="#ffffff").place(relx=0.5, rely=0.5, anchor="center")
+
+    def _fade_overlay_in(self):
+        if not hasattr(self, '_overlay') or not self._overlay.winfo_exists(): return
+        if not hasattr(self, 'drawer_open') or not self.drawer_open: return
+        colors = ["#0a0a1a", "#0d0d20", "#101025", "#121228", "#14142b",
+                  "#16162e", "#181831", "#1a1a34", "#1a1a2e"]
+        if self._overlay_alpha < len(colors) - 1:
+            self._overlay_alpha += 1
+            self._overlay.configure(bg=colors[self._overlay_alpha])
+            self.root.after(18, self._fade_overlay_in)
+
+    def _fade_overlay_out(self):
+        if not hasattr(self, '_overlay') or not self._overlay.winfo_exists(): return
+        colors = ["#1a1a2e", "#181831", "#16162e", "#14142b",
+                  "#121228", "#101025", "#0d0d20", "#0a0a1a"]
+        if self._overlay_alpha < len(colors):
+            self._overlay.configure(bg=colors[self._overlay_alpha])
+            self._overlay_alpha += 1
+            self.root.after(18, self._fade_overlay_out)
+        else:
+            self._overlay.destroy()
+
+    def _animate_drawer_in(self, current_x):
+        if not hasattr(self, 'drawer_frame') or not self.drawer_frame.winfo_exists(): return
+        target_x = -self.drawer_width
+        step = (target_x - current_x) // 4
+        if abs(step) < 1: step = -1 if target_x < current_x else 1
+        next_x = current_x + step
+        if (step < 0 and next_x <= target_x) or (step > 0 and next_x >= target_x):
+            self.drawer_frame.place(x=target_x)
+            self.drawer_frame.lift()
+        else:
+            self.drawer_frame.place(x=next_x)
+            self.drawer_frame.lift()
+            self.root.after(10, lambda: self._animate_drawer_in(next_x))
+
+    def _close_drawer(self):
+        if not hasattr(self, 'drawer_open') or not self.drawer_open: return
+        self._animate_drawer_out(-self.drawer_width)
+
+    def _animate_drawer_out(self, current_x):
+        if not hasattr(self, 'drawer_open') or not self.drawer_open: return
+        if not hasattr(self, 'drawer_frame') or not self.drawer_frame.winfo_exists(): return
+        target_x = 0
+        step = (target_x - current_x) // 4
+        if abs(step) < 1: step = 1
+        next_x = current_x + step
+        if next_x >= target_x:
+            self.drawer_frame.place(x=target_x)
+            self.drawer_frame.place_forget()
+            self.drawer_open = False
+            if hasattr(self, '_overlay') and self._overlay.winfo_exists():
+                self._overlay.destroy()
+            if hasattr(self, 'mobile_cart_btn'):
+                self.mobile_cart_btn.place(relx=1.0, x=-8, y=10, anchor="ne")
+                self.mobile_cart_btn.lift()
+        else:
+            self.drawer_frame.place(x=next_x)
+            self.drawer_frame.lift()
+            self.root.after(10, lambda: self._animate_drawer_out(next_x))
+
+    def _refresh_drawer_ui(self):
+        if not hasattr(self, 'drawer_frame') or not self.drawer_frame.winfo_exists(): return
+        self._render_drawer_tabs_content()
+        self._render_drawer_items_content()
+        self._render_drawer_footer_content()
+
+    def _render_drawer_tabs_content(self):
+        for widget in self.drawer_tabs_frame.winfo_children(): widget.destroy()
+        for person in self.model.orders:
+            bg = self.COLORS["accent_red"] if person == self.model.current_table else self.COLORS["btn_bg"]
+            tab = tk.Frame(self.drawer_tabs_frame, bg=bg, padx=2)
+            tab.pack(side=tk.LEFT, padx=2, pady=2)
+            tk.Button(tab, text=person, font=("Arial", 9, "bold"), bg=bg, fg=self.COLORS["white"], 
+                      relief=tk.FLAT, cursor="hand2", command=lambda p=person: self.controller.switch_person(p)).pack(side=tk.LEFT)
+            if person != "Table":
+                tk.Button(tab, text="×", font=("Arial", 9, "bold"), bg=bg, fg=self.COLORS["text_muted"], 
+                          relief=tk.FLAT, width=2, command=lambda p=person: self.controller.remove_person(p)).pack(side=tk.LEFT)
+
+    def _render_drawer_items_content(self):
+        for widget in self.drawer_inner.winfo_children(): widget.destroy()
+        items = self.model.orders.get(self.model.current_table, [])
+        lang = self.model.current_language
+        if not items:
+            tk.Label(self.drawer_inner, text=self.model.t("order_empty"), font=("Arial", 11, "italic"), 
+                     bg=self.COLORS["order_bg"], fg=self.COLORS["text_muted"], pady=60).pack()
+            return
+        for item in items:
+            row = tk.Frame(self.drawer_inner, bg=self.COLORS["bg_card"], padx=12, pady=10)
+            row.pack(fill=tk.X, pady=4, padx=8)
+            top = tk.Frame(row, bg=self.COLORS["bg_card"])
+            top.pack(fill=tk.X)
+            tk.Label(top, text=item["name"].get(lang, item["name"]["en"]), font=("Arial", 10, "bold"), 
+                     bg=self.COLORS["bg_card"], fg=self.COLORS["text_light"]).pack(side=tk.LEFT)
+            tk.Label(top, text=f"€{item['price'] * item['qty']:.2f}", font=("Arial", 11, "bold"), 
+                     bg=self.COLORS["bg_card"], fg=self.COLORS["text_gold"]).pack(side=tk.RIGHT)
+            ctrls = tk.Frame(row, bg=self.COLORS["bg_card"])
+            ctrls.pack(fill=tk.X, pady=(8,0))
+            tk.Button(ctrls, text="−", font=("Arial", 10, "bold"), bg=self.COLORS["highlight"], fg=self.COLORS["white"], 
+                      relief=tk.FLAT, width=3, cursor="hand2", command=lambda iid=item["id"]: self.controller.remove_item(iid)).pack(side=tk.LEFT)
+            tk.Label(ctrls, text=str(item["qty"]), font=("Arial", 11, "bold"), bg=self.COLORS["bg_card"], 
+                     fg=self.COLORS["text_light"], width=4).pack(side=tk.LEFT)
+            tk.Button(ctrls, text="+", font=("Arial", 10, "bold"), bg=self.COLORS["success"], fg=self.COLORS["white"], 
+                      relief=tk.FLAT, width=3, cursor="hand2", command=lambda i=item: self.controller.add_item(i)).pack(side=tk.LEFT)
+
+    def _render_drawer_footer_content(self):
+        for widget in self.drawer_footer.winfo_children(): widget.destroy()
+        tip_f = tk.Frame(self.drawer_footer, bg=self.COLORS["bg_panel"])
+        tip_f.pack(fill=tk.X, pady=(0, 8))
+        tk.Label(tip_f, text="Tip:", font=("Arial", 10), bg=self.COLORS["bg_panel"], fg=self.COLORS["text_light"]).pack(side=tk.LEFT)
+        for pct in [0, 5, 10, 15, 20]:
+            bg_c = self.COLORS["accent_gold"] if pct == self.model.tip_percent else self.COLORS["btn_bg"]
+            fg_c = self.COLORS["bg_dark"] if pct == self.model.tip_percent else self.COLORS["text_light"]
+            tk.Button(tip_f, text=f"{pct}%", font=("Arial", 9, "bold"), bg=bg_c, fg=fg_c, relief=tk.FLAT, 
+                      padx=6, cursor="hand2", command=lambda p=pct: self.controller.set_tip(p)).pack(side=tk.LEFT, padx=2)
+        sub = self.model.get_order_total()
+        tot = self.model.get_order_total_with_tip()
+        tk.Label(self.drawer_footer, text=f"Subtotal: €{sub:.2f}", font=("Arial", 10), 
+                 bg=self.COLORS["bg_panel"], fg=self.COLORS["text_light"], anchor="e").pack(fill=tk.X)
+        tk.Label(self.drawer_footer, text=f"Total: €{tot:.2f}", font=("Georgia", 18, "bold"), 
+                 bg=self.COLORS["bg_panel"], fg=self.COLORS["text_gold"], anchor="e").pack(fill=tk.X, pady=(2, 10))
+        btns = tk.Frame(self.drawer_footer, bg=self.COLORS["bg_panel"])
+        btns.pack(fill=tk.X)
+        tk.Button(btns, text="Place Order", font=("Arial", 12, "bold"), bg=self.COLORS["success"], 
+                  fg=self.COLORS["white"], relief=tk.FLAT, pady=10, cursor="hand2",
+                  command=self._handle_drawer_order_final).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 5))
+        tk.Button(btns, text="Clear", font=("Arial", 12, "bold"), bg=self.COLORS["highlight"], 
+                  fg=self.COLORS["white"], relief=tk.FLAT, pady=10, cursor="hand2",
+                  command=self.controller.clear_order).pack(side=tk.LEFT, expand=True, fill=tk.X)
+
+    def _handle_drawer_order_final(self):
+        self._close_drawer()
+        self.controller.place_order()
+        
+    def _is_over_order_drop_target(self, x_root, y_root):
+        """
+        Return True if the given screen coordinates are over the order drop area.
+        Uses the visible order list/canvas as the drop target.
+        """
+        target = self.order_list_frame
+
+        x1 = target.winfo_rootx()
+        y1 = target.winfo_rooty()
+        x2 = x1 + target.winfo_width()
+        y2 = y1 + target.winfo_height()
+
+        return x1 <= x_root <= x2 and y1 <= y_root <= y2
+    
         # Description
         desc_text = item["description"].get(lang, item["description"]["en"])
         desc_label = tk.Label(
@@ -1856,6 +2328,9 @@ class MenuView:
 
     def _on_drag_motion(self, event):
         """
+        Update floating drag label position and highlight drop target.
+        """
+        if hasattr(self, "_drag_label") and self._drag_label:
         Update the floating drag label position during drag.
         
         Args:
@@ -1866,6 +2341,20 @@ class MenuView:
             y = event.y_root - self.root.winfo_rooty()
             self._drag_label.place(x=x + 10, y=y + 10)
 
+        if self._is_over_order_drop_target(event.x_root, event.y_root):
+            self.order_list_frame.configure(bg="#243b55")
+            self.order_canvas.configure(bg="#243b55")
+            self.order_inner.configure(bg="#243b55")
+        else:
+            self.order_list_frame.configure(bg=self.COLORS["order_bg"])
+            self.order_canvas.configure(bg=self.COLORS["order_bg"])
+            self.order_inner.configure(bg=self.COLORS["order_bg"])
+
+    def _on_drag_end(self, event):
+        """
+        End drag — add item if dropped over order area.
+        """
+        if hasattr(self, "_drag_label") and self._drag_label:
     def _on_drag_end(self, event):
         """
         End drag — if dropped over the order panel, add the item to order.
@@ -1880,6 +2369,16 @@ class MenuView:
         if self._drag_data["item"] is None:
             return
 
+        if self._is_over_order_drop_target(event.x_root, event.y_root):
+            self.controller.add_item(self._drag_data["item"])
+
+        self.order_list_frame.configure(bg=self.COLORS["order_bg"])
+        self.order_canvas.configure(bg=self.COLORS["order_bg"])
+        self.order_inner.configure(bg=self.COLORS["order_bg"])
+
+        self._drag_data["item"] = None
+        self._drag_data["x"] = None
+        self._drag_data["y"] = None
         # Check if dropped on order panel
         drop_x = event.x_root
         order_x = self.order_frame.winfo_rootx()
@@ -1927,6 +2426,80 @@ class MenuView:
                     command=lambda p=person: self.controller.remove_person(p)
                 )
                 rm_btn.pack(side=tk.LEFT)
+
+    def _show_add_person_dialog(self):
+        """Standard dialog to add person - Centered and Smart Overlay Fix"""
+        # Ensure the floating Order button stays hidden immediately
+        if hasattr(self, 'mobile_cart_btn'):
+            self.mobile_cart_btn.place_forget()
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title(self.model.t("add_person"))
+        dialog.geometry("320x160")
+        """Show a simple dialog to add a new person to the group order."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title(self.model.t("add_person"))
+        dialog.geometry("300x120")
+        dialog.configure(bg=self.COLORS["bg_card"])
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        # Logic to center the popup window relative to the main app
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_w = self.root.winfo_width()
+        main_h = self.root.winfo_height()
+        dialog.geometry(f"+{main_x + (main_w//2) - 160}+{main_y + (main_h//2) - 80}")
+
+        tk.Label(dialog, text=self.model.t("person_name"), font=("Arial", 11, "bold"), 
+                 bg=self.COLORS["bg_card"], fg=self.COLORS["text_light"]).pack(pady=(20, 5))
+
+        entry = tk.Entry(dialog, font=("Arial", 12), width=22, bg=self.COLORS["bg_panel"], 
+                         fg=self.COLORS["white"], insertbackground="white", relief=tk.FLAT)
+        entry.pack(pady=10, padx=20)
+        entry.focus_set()
+
+        def submit():
+            name = entry.get().strip()
+            if name:
+                self.controller.add_person(name)
+                # Lock the Order button state if the drawer is still open
+                if hasattr(self, 'drawer_open') and self.drawer_open:
+                    if hasattr(self, 'mobile_cart_btn'):
+                        self.mobile_cart_btn.place_forget()
+                dialog.destroy()
+
+        entry.bind("<Return>", lambda e: submit())
+        
+        tk.Button(dialog, text="OK", font=("Arial", 11, "bold"), bg=self.COLORS["accent_gold"], 
+                  fg=self.COLORS["bg_dark"], relief=tk.FLAT, cursor="hand2", padx=30, pady=5, 
+                  command=submit).pack(pady=10)
+
+        # Handle X button on popup to prevent 'Order' button overlap
+        dialog.protocol("WM_DELETE_WINDOW", lambda: [
+            self.mobile_cart_btn.place_forget() if hasattr(self, 'drawer_open') and self.drawer_open else None,
+            dialog.destroy()
+        ])
+        tk.Label(
+            dialog, text=self.model.t("person_name"),
+            font=("Arial", 11), bg=self.COLORS["bg_card"], fg=self.COLORS["text_light"]
+        ).pack(pady=(15, 5))
+
+        entry = tk.Entry(dialog, font=("Arial", 12), width=20)
+        entry.pack(pady=5)
+        entry.focus_set()
+
+        def submit():
+            self.controller.add_person(entry.get())
+            dialog.destroy()
+
+        entry.bind("<Return>", lambda e: submit())
+        tk.Button(
+            dialog, text="OK", font=("Arial", 11, "bold"),
+            bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
+            relief=tk.FLAT, cursor="hand2", padx=20, pady=4,
+            command=submit
+        ).pack(pady=5)
 
     # ---- ORDER ITEMS RENDERING ----
 
