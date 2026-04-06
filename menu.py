@@ -11,8 +11,8 @@ Architecture: Model-View-Controller (MVC)
 Features:
 - Full menu with categories (starters, soups, mains, desserts, beverages)
 - Set meals (2-course, 3-course) and Today's Special
-- Dietary filters: vegan, vegetarian, gluten-free, lactose-free, non-alcoholic, seafood
-- Allergen info and country of origin of the dish
+- Dietary filters: vegan, vegetarian, gluten-free, lactose-free, non-alcoholic
+- Allergen info and country of origin
 - Single & group ordering with table management
 - Drag & drop to add items to order (with button alternative)
 - 3 dynamically changeable languages (English, German, Chinese)
@@ -175,29 +175,6 @@ class MenuModel:
                 "price": 5.90, "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free"],
                 "allergens": ["soy"], "origin": "Japan", "contains_alcohol": False
             },
-            {
-                "id": "l5", "category": "soups",
-                "name": {"en": "Beijing Hot & Sour Soup", "de": "Peking-Suppe (Scharf-Sauer)", "zh": "北京酸辣汤"},
-                "description": {
-                    "en": "Spicy and sour soup with egg, bamboo, and wood-ear mushrooms",
-                    "de": "Scharf-saure Suppre mit Ei, Bambus und Morcheln",
-                    "zh": "辣味北京酸辣蛋花汤"
-                },
-                "price": 8.50, "tags": ["vegetarian", "lactose-free"],
-                "allergens": ["egg", "soy"], "origin": "China", "contains_alcohol": False
-            },
-            {
-                "id": "l6", "category": "soups",
-                "name": {"en": "Shrimp & Chicken Wonton Soup", "de": "Garnelen-Hähnchen-Wonton-Suppe", "zh": "鸡肉虾仁云吞汤"},
-                "description": {
-                    "en": "Handmade wontons with shrimp and chicken filling in a clear broth",
-                    "de": "Handgemachte Wontons mit Garnelen- und Hühnchenfüllung in klarer Brühe",
-                    "zh": "手工鸡肉虾仁馄饨清汤"
-                },
-                "price": 8.00, "tags": ["seafood"],
-                "allergens": ["shellfish", "gluten"], "origin": "China", "contains_alcohol": False
-            },
-
             # === MAIN COURSES ===
             {
                 "id": "m1", "category": "mains",
@@ -287,40 +264,6 @@ class MenuModel:
                 "price": 13.50, "tags": ["vegan", "vegetarian", "lactose-free"],
                 "allergens": ["soy"], "origin": "China", "contains_alcohol": False
             },
-            {
-                "id": "m9", "category": "mains",
-                "name": {"en": "Shui Zhu Fish", "de": "Shui Zhu Fisch", "zh": "水煮鱼"},
-                "description": {
-                    "en": "Tender fish fillets poached in a spicy broth with Sichuan pepper, dried chili, and coriander",
-                    "de": "Zarte Fischfilets in scharfer Brühe mit Sichuanpfeffer, Chili und Koriander",
-                    "zh": "麻辣水煮鱼配干辣椒和香菜"
-                },
-                "price": 22.90, "tags": ["seafood", "gluten-free", "lactose-free"],
-                "allergens": ["fish"], "origin": "China", "contains_alcohol": False
-            },
-            {
-                "id": "m10", "category": "mains",
-                "name": {"en": "Kung Pao Prawns", "de": "Kung-Pao-Garnelen", "zh": "宫保虾仁"},
-                "description": {
-                    "en": "Succulent prawns in a sweet and acidic sauce with crunchy peanuts",
-                    "de": "Saftige Garnelen in süß-säuerlicher Sauce mit knackigen Erdnüssen",
-                    "zh": "宫保大虾配花生和酸甜酱"
-                },
-                "price": 23.50, "tags": ["seafood", "lactose-free"],
-                "allergens": ["shellfish", "peanuts"], "origin": "China", "contains_alcohol": False
-            },
-            {
-                "id": "m11", "category": "mains",
-                "name": {"en": "Mixed Seafood Claypot", "de": "Meeresfrüchte-Topf", "zh": "海鲜砂锅"},
-                "description": {
-                    "en": "A rich assortment of seafood simmered with vegetables in a traditional clay pot",
-                    "de": "Vielfältige Meeresfrüchte mit Gemüse im traditionellen Tontopf geschmort",
-                    "zh": "传统海鲜砂锅配时令蔬菜"
-                },
-                "price": 25.90, "tags": ["seafood", "lactose-free"],
-                "allergens": ["shellfish", "fish", "molluscs"], "origin": "China", "contains_alcohol": False
-            },
-
             # === DESSERTS ===
             {
                 "id": "d1", "category": "desserts",
@@ -487,24 +430,6 @@ class MenuModel:
                 },
                 "price": 3.90, "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"],
                 "allergens": [], "origin": "USA", "contains_alcohol": False
-            },{
-                "id": "ts1",
-                "category": "todays_special",
-                "name": {
-                    "en": "🌟 Peking Duck Feast for Two",
-                    "de": "🌟 Peking-Enten-Festmahl für Zwei",
-                    "zh": "🌟 双人北京烤鸭盛宴"
-                },
-                "description": {
-                    "en": "Whole Peking duck with pancakes, hoisin sauce, cucumber, scallions, and jasmine tea for two.",
-                    "de": "Ganze Peking-Ente mit Pfannkuchen, Hoisin-Sauce, Gurke, Frühlingszwiebeln und Jasmintee für zwei Personen.",
-                    "zh": "整只北京烤鸭配薄饼、海鲜酱、黄瓜、葱和双人茉莉花茶。"
-                },
-                "price": 58.90,
-                "tags": ["non-alcoholic"],
-                "allergens": ["gluten"],
-                "origin": "China",
-                "contains_alcohol": False
             },
         ]
 
@@ -642,7 +567,6 @@ class MenuModel:
                 "app_title": "Gasthaus Peking Duck",
                 "app_subtitle": "German-Chinese Fusion Cuisine",
                 "starters": "Starters", "soups": "Soups & Light Courses",
-                "starters": "Starters", "soups": "Soups",
                 "mains": "Main Courses", "desserts": "Desserts",
                 "beverages": "Beverages", "set_meals": "Set Meals",
                 "todays_special": "Today's Special",
@@ -675,13 +599,11 @@ class MenuModel:
                 "clear_confirm_msg": "This will remove all items from the order.",
                 "person_exists": "This person already exists in the order.",
                 "enter_name": "Please enter a name.",
-                "seafood": "Seafood",
             },
             "de": {
                 "app_title": "Gasthaus Peking Duck",
                 "app_subtitle": "Deutsch-Chinesische Fusionsküche",
                 "starters": "Vorspeisen", "soups": "Suppen & Leichte Gerichte",
-                "starters": "Vorspeisen", "soups": "Suppen ",
                 "mains": "Hauptgerichte", "desserts": "Nachspeisen",
                 "beverages": "Getränke", "set_meals": "Menüs",
                 "todays_special": "Tagesangebot",
@@ -714,7 +636,6 @@ class MenuModel:
                 "clear_confirm_msg": "Dies entfernt alle Artikel aus der Bestellung.",
                 "person_exists": "Diese Person existiert bereits in der Bestellung.",
                 "enter_name": "Bitte geben Sie einen Namen ein.",
-                "seafood": "Meeresfrüchte",
             },
             "zh": {
                 "app_title": "北京烤鸭餐馆",
@@ -752,7 +673,6 @@ class MenuModel:
                 "clear_confirm_msg": "这将删除订单中的所有菜品。",
                 "person_exists": "此成员已存在于订单中。",
                 "enter_name": "请输入姓名。",
-                "seafood": "海鲜",
             },
         }
 
@@ -1228,7 +1148,6 @@ class MenuView:
         self.root.grid_columnconfigure(0, weight=1)
         # Bind the resize event to handle responsive layout switching
         self.root.bind("<Configure>", self._handle_responsiveness)
-
     def _setup_styles(self):
         """Configure ttk styles for consistent theming."""
         self.style = ttk.Style()
@@ -1339,8 +1258,6 @@ class MenuView:
         Build the left menu panel with:
         - Filter bar (Horizontally scrollable with visible scrollbar)
         - Category buttons (Horizontally scrollable with visible scrollbar)
-        - Filter bar (dietary toggles)
-        - Category buttons
         - Scrollable item card area
         """
         self.menu_frame.grid_rowconfigure(2, weight=1)
@@ -1385,17 +1302,6 @@ class MenuView:
         self._build_category_buttons()
 
         # --- 3. Menu Items Scroll Area (Existing Vertical Code) ---
-        # Filter bar
-        self.filter_frame = tk.Frame(self.menu_frame, bg=self.COLORS["bg_panel"], pady=6, padx=8)
-        self.filter_frame.grid(row=0, column=0, sticky="ew")
-        self._build_filters()
-
-        # Category buttons row
-        self.cat_frame = tk.Frame(self.menu_frame, bg=self.COLORS["bg_dark"], pady=4, padx=4)
-        self.cat_frame.grid(row=1, column=0, sticky="ew")
-        self._build_category_buttons()
-
-        # Menu items scroll area
         self.menu_canvas_frame = tk.Frame(self.menu_frame, bg=self.COLORS["bg_dark"])
         self.menu_canvas_frame.grid(row=2, column=0, sticky="nsew")
         self.menu_canvas_frame.grid_rowconfigure(0, weight=1)
@@ -1426,12 +1332,6 @@ class MenuView:
         
         # Vertical mouse wheel scrolling for main menu items
         self.menu_canvas.bind_all("<MouseWheel>", lambda e: self.menu_canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
-        # Make inner frame expand to canvas width
-        self.menu_canvas.bind("<Configure>", self._on_menu_canvas_configure)
-        
-        # Mouse wheel scrolling
-        self.menu_canvas.bind_all("<MouseWheel>",
-            lambda e: self.menu_canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
 
     def _on_menu_canvas_configure(self, event):
         """Resize the inner frame to match canvas width for proper layout."""
@@ -1448,7 +1348,6 @@ class MenuView:
 
         self.filter_buttons = {}
         filter_tags = ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"]
-        filter_tags = ["vegan", "vegetarian", "gluten-free", "lactose-free", "seafood", "non-alcoholic"]
         for tag in filter_tags:
             btn = tk.Button(
                 self.filter_frame, text=tag,
@@ -1530,11 +1429,15 @@ class MenuView:
             font=("Arial", 10, "bold"),
             bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
             relief=tk.FLAT, cursor="hand2", padx=10, # Fixed: Removed fixed width=3 and added padx=10 for dynamic resizing
+<<<<<<< Updated upstream
             self.group_frame, text="+",
             font=("Arial", 10, "bold"),
             bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
             relief=tk.FLAT, cursor="hand2", width=3,
             command=self.controller.increment_people
+=======
+            command=self._show_add_person_dialog
+>>>>>>> Stashed changes
         )
         self.add_person_btn.pack(side=tk.RIGHT, padx=2)
 
@@ -1683,10 +1586,6 @@ class MenuView:
         # Synchronize slide-in drawer if it is currently open
         if hasattr(self, 'drawer_open') and self.drawer_open:
             self._refresh_drawer_ui()
-        """Refresh the order panel: person tabs, items, totals."""
-        self._build_person_tabs()
-        self._render_order_items()
-        self._update_totals()
 
     def refresh_service_button(self):
         """Update the service button appearance based on state."""
@@ -1787,17 +1686,6 @@ class MenuView:
         """
         lang = self.model.current_language
         is_special = item.get("category") == "todays_special"
-        Render a single menu item as a styled card with:
-        - Name, price, description
-        - Dietary tags as colored badges
-        - Allergen and origin info
-        - Alcohol warning if applicable
-        - Add button and drag support
-        
-        Args:
-            item (dict): Menu item data
-        """
-        lang = self.model.current_language
         
         card = tk.Frame(
             self.menu_inner, bg=self.COLORS["bg_card"],
@@ -1808,17 +1696,6 @@ class MenuView:
         card.pack(fill=tk.X, padx=8, pady=4)
 
         # Header Row: Name, Price and Add Button
-            highlightbackground=self.COLORS["bg_panel"],
-            highlightthickness=1
-        )
-        card.pack(fill=tk.X, padx=8, pady=4)
-
-        # Make card draggable
-        card.bind("<ButtonPress-1>", lambda e, i=item: self._on_drag_start(e, i))
-        card.bind("<B1-Motion>", self._on_drag_motion)
-        card.bind("<ButtonRelease-1>", self._on_drag_end)
-
-        # Top row: name + price
         top = tk.Frame(card, bg=self.COLORS["bg_card"])
         top.pack(fill=tk.X)
 
@@ -1834,30 +1711,6 @@ class MenuView:
             top, text="+", font=("Arial", 12, "bold"),
             bg=self.COLORS["success"], fg=self.COLORS["white"],
             activebackground="#219a52", relief=tk.FLAT, cursor="hand2", width=3,
-            top, text=name_text,
-            font=("Georgia", 13, "bold"),
-            bg=self.COLORS["bg_card"], fg=self.COLORS["text_light"],
-            anchor="w", cursor="hand2"
-        )
-        name_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        name_label.bind("<ButtonPress-1>", lambda e, i=item: self._on_drag_start(e, i))
-        name_label.bind("<B1-Motion>", self._on_drag_motion)
-        name_label.bind("<ButtonRelease-1>", self._on_drag_end)
-
-        price_label = tk.Label(
-            top, text=f"€{item['price']:.2f}",
-            font=("Georgia", 13, "bold"),
-            bg=self.COLORS["bg_card"], fg=self.COLORS["text_gold"]
-        )
-        price_label.pack(side=tk.RIGHT)
-
-        # Add button (alternative to drag)
-        add_btn = tk.Button(
-            top, text="+",
-            font=("Arial", 12, "bold"),
-            bg=self.COLORS["success"], fg=self.COLORS["white"],
-            activebackground="#219a52",
-            relief=tk.FLAT, cursor="hand2", width=3,
             command=lambda i=item: self.controller.add_item(i)
         )
         add_btn.pack(side=tk.RIGHT, padx=(8, 0))
@@ -2253,56 +2106,6 @@ class MenuView:
 
         return x1 <= x_root <= x2 and y1 <= y_root <= y2
     
-        # Description
-        desc_text = item["description"].get(lang, item["description"]["en"])
-        desc_label = tk.Label(
-            card, text=desc_text,
-            font=("Arial", 10),
-            bg=self.COLORS["bg_card"], fg=self.COLORS["text_muted"],
-            anchor="w", justify=tk.LEFT, wraplength=400
-        )
-        desc_label.pack(fill=tk.X, pady=(4, 6))
-
-        # Tags row
-        tags_frame = tk.Frame(card, bg=self.COLORS["bg_card"])
-        tags_frame.pack(fill=tk.X)
-
-        for tag in item.get("tags", []):
-            tag_color = self.TAG_COLORS.get(tag, self.COLORS["text_muted"])
-            tag_label = tk.Label(
-                tags_frame, text=self.model.t(tag),
-                font=("Arial", 8, "bold"),
-                bg=tag_color, fg=self.COLORS["white"],
-                padx=6, pady=1
-            )
-            tag_label.pack(side=tk.LEFT, padx=(0, 4))
-
-        # Alcohol warning
-        if item.get("contains_alcohol"):
-            alc_label = tk.Label(
-                tags_frame, text=self.model.t("contains_alcohol"),
-                font=("Arial", 8, "bold"),
-                bg=self.COLORS["tag_alcohol"], fg=self.COLORS["white"],
-                padx=6, pady=1
-            )
-            alc_label.pack(side=tk.LEFT, padx=(0, 4))
-
-        # Allergens & origin
-        info_parts = []
-        if item.get("allergens"):
-            info_parts.append(f"{self.model.t('allergens')}: {', '.join(item['allergens'])}")
-        if item.get("origin"):
-            info_parts.append(f"{self.model.t('origin')}: {item['origin']}")
-        
-        if info_parts:
-            info_label = tk.Label(
-                card, text="  |  ".join(info_parts),
-                font=("Arial", 9, "italic"),
-                bg=self.COLORS["bg_card"], fg=self.COLORS["text_muted"],
-                anchor="w"
-            )
-            info_label.pack(fill=tk.X, pady=(4, 0))
-
     # ---- DRAG AND DROP ----
 
     def _on_drag_start(self, event, item):
@@ -2331,12 +2134,6 @@ class MenuView:
         Update floating drag label position and highlight drop target.
         """
         if hasattr(self, "_drag_label") and self._drag_label:
-        Update the floating drag label position during drag.
-        
-        Args:
-            event: Tkinter motion event
-        """
-        if hasattr(self, '_drag_label') and self._drag_label:
             x = event.x_root - self.root.winfo_rootx()
             y = event.y_root - self.root.winfo_rooty()
             self._drag_label.place(x=x + 10, y=y + 10)
@@ -2355,14 +2152,6 @@ class MenuView:
         End drag — add item if dropped over order area.
         """
         if hasattr(self, "_drag_label") and self._drag_label:
-    def _on_drag_end(self, event):
-        """
-        End drag — if dropped over the order panel, add the item to order.
-        
-        Args:
-            event: Tkinter button release event
-        """
-        if hasattr(self, '_drag_label') and self._drag_label:
             self._drag_label.destroy()
             self._drag_label = None
 
@@ -2379,15 +2168,6 @@ class MenuView:
         self._drag_data["item"] = None
         self._drag_data["x"] = None
         self._drag_data["y"] = None
-        # Check if dropped on order panel
-        drop_x = event.x_root
-        order_x = self.order_frame.winfo_rootx()
-        order_w = self.order_frame.winfo_width()
-        
-        if drop_x >= order_x and drop_x <= order_x + order_w:
-            self.controller.add_item(self._drag_data["item"])
-
-        self._drag_data["item"] = None
 
     def _on_order_drop(self, event):
         """Handle click on order panel (for potential drop target feedback)."""
@@ -2436,10 +2216,6 @@ class MenuView:
         dialog = tk.Toplevel(self.root)
         dialog.title(self.model.t("add_person"))
         dialog.geometry("320x160")
-        """Show a simple dialog to add a new person to the group order."""
-        dialog = tk.Toplevel(self.root)
-        dialog.title(self.model.t("add_person"))
-        dialog.geometry("300x120")
         dialog.configure(bg=self.COLORS["bg_card"])
         dialog.transient(self.root)
         dialog.grab_set()
@@ -2480,27 +2256,6 @@ class MenuView:
             self.mobile_cart_btn.place_forget() if hasattr(self, 'drawer_open') and self.drawer_open else None,
             dialog.destroy()
         ])
-        tk.Label(
-            dialog, text=self.model.t("person_name"),
-            font=("Arial", 11), bg=self.COLORS["bg_card"], fg=self.COLORS["text_light"]
-        ).pack(pady=(15, 5))
-
-        entry = tk.Entry(dialog, font=("Arial", 12), width=20)
-        entry.pack(pady=5)
-        entry.focus_set()
-
-        def submit():
-            self.controller.add_person(entry.get())
-            dialog.destroy()
-
-        entry.bind("<Return>", lambda e: submit())
-        tk.Button(
-            dialog, text="OK", font=("Arial", 11, "bold"),
-            bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
-            relief=tk.FLAT, cursor="hand2", padx=20, pady=4,
-            command=submit
-        ).pack(pady=5)
-
     # ---- ORDER ITEMS RENDERING ----
 
     def _render_order_items(self):
@@ -2632,4 +2387,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
