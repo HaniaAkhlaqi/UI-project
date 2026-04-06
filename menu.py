@@ -50,8 +50,8 @@ class MenuModel:
         """Initialize model with full menu data and default state."""
         self.current_language = 'en'  # Default language
         self.active_filters = set()   # No filters active initially
-        self.orders = {"Table": []}   # Default single order
-        self.current_table = "Table"
+        self.orders = {"Seat 1": []}   # Default single-seat order
+        self.current_table = "Seat 1"
         self.service_called = False
         self.tip_percent = 0
         self._build_menu()
@@ -662,7 +662,11 @@ class MenuModel:
                 "order_placed_msg": "Your order has been sent to the kitchen. Thank you!",
                 "order_empty": "Your order is empty",
                 "group_order": "Group Order", "single_order": "Single Order",
-                "add_person": "Add Person", "person_name": "Person name:",
+                "people": "People", "pay_all": "Pay All", "split_bill": "Split Bill",
+                "payment_successful": "Payment Successful",
+                "each_paid": "Each of the {count} people paid {amount} {currency}.",
+                "paid_total": "Total paid {amount} {currency}.",
+                "each_pays_their_own": "Each pays their own total:\n{details}",
                 "table": "Table", "contains_alcohol": "⚠️ Contains Alcohol",
                 "qty": "Qty", "price": "Price", "item": "Item",
                 "drag_hint": "Drag items to your order, or use the + button",
@@ -697,7 +701,11 @@ class MenuModel:
                 "order_placed_msg": "Ihre Bestellung wurde an die Küche gesendet. Vielen Dank!",
                 "order_empty": "Ihre Bestellung ist leer",
                 "group_order": "Gruppenbestellung", "single_order": "Einzelbestellung",
-                "add_person": "Person hinzufügen", "person_name": "Name der Person:",
+                "people": "Personen", "pay_all": "Alles bezahlen", "split_bill": "Rechnung teilen",
+                "payment_successful": "Zahlung erfolgreich",
+                "each_paid": "Jeder der {count} Personen zahlte {amount} {currency}.",
+                "paid_total": "Insgesamt bezahlt {amount} {currency}.",
+                "each_pays_their_own": "Jeder zahlt seinen eigenen Betrag:\n{details}",
                 "table": "Tisch", "contains_alcohol": "⚠️ Enthält Alkohol",
                 "qty": "Anz.", "price": "Preis", "item": "Artikel",
                 "drag_hint": "Ziehen Sie Artikel in Ihre Bestellung oder verwenden Sie den + Button",
@@ -731,7 +739,11 @@ class MenuModel:
                 "order_placed_msg": "您的订单已发送至厨房。谢谢！",
                 "order_empty": "您的订单为空",
                 "group_order": "团体点单", "single_order": "单人点单",
-                "add_person": "添加成员", "person_name": "成员姓名：",
+                "people": "人数", "pay_all": "全部支付", "split_bill": "分摊账单",
+                "payment_successful": "支付成功",
+                "each_paid": "每位{count}人支付了{amount}{currency}。",
+                "paid_total": "总计支付{amount}{currency}。",
+                "each_pays_their_own": "每人支付自己的账单：\n{details}",
                 "table": "餐桌", "contains_alcohol": "⚠️ 含酒精",
                 "qty": "数量", "price": "价格", "item": "菜品",
                 "drag_hint": "拖拽菜品至订单，或使用 + 按钮",
@@ -873,10 +885,48 @@ class MenuModel:
         Args:
             name (str): Person's name to remove
         """
-        if name in self.orders and name != "Table":
+        if name in self.orders and name != "Seat 1":
             del self.orders[name]
             if self.current_table == name:
                 self.current_table = list(self.orders.keys())[0]
+
+    def get_people_count(self):
+        """
+        Return the current number of seats/people in the order.
+        """
+        return len(self.orders)
+
+    def get_next_seat_name(self):
+        """
+        Generate the next available seat name.
+        """
+        idx = 1
+        while f"Seat {idx}" in self.orders:
+            idx += 1
+        return f"Seat {idx}"
+
+    def add_seat(self):
+        """
+        Add a new seat to the group order and switch to it.
+        """
+        name = self.get_next_seat_name()
+        self.orders[name] = []
+        self.current_table = name
+
+    def remove_last_seat(self):
+        """
+        Remove the last seat from the group order if more than one exists.
+        """
+        if len(self.orders) <= 1:
+            return
+        seat_names = sorted(
+            self.orders.keys(),
+            key=lambda name: int(name.split()[-1]) if name.split()[-1].isdigit() else float('inf')
+        )
+        last = seat_names[-1]
+        del self.orders[last]
+        if self.current_table == last:
+            self.current_table = seat_names[0]
 
 
 # =============================================================================
@@ -970,12 +1020,11 @@ class MenuController:
         self.model.tip_percent = percent
         self.view.refresh_order()
 
-    def place_order(self):
+    def pay_all(self):
         """
-        Submit the current order. Shows confirmation or warning if empty.
-        After placing, clears the order.
+        Pay the full order amount for all seats.
         """
-        total = self.model.get_order_total()
+        total = self.model.get_order_total_with_tip()
         if total == 0:
             messagebox.showwarning(
                 self.model.t("your_order"),
@@ -983,9 +1032,46 @@ class MenuController:
             )
             return
         messagebox.showinfo(
-            self.model.t("order_placed"),
-            self.model.t("order_placed_msg")
+            self.model.t("payment_successful"),
+            self.model.t("paid_total").format(
+                amount=f"{total:.2f}", currency="SEK"
+            )
         )
+        self.model.clear_order()
+        self.view.refresh_order()
+
+    def split_bill(self):
+        """
+        Split the bill so each person pays for their own order.
+        """
+        total = self.model.get_order_total()
+        person_count = self.model.get_people_count()
+        if total == 0:
+            messagebox.showwarning(
+                self.model.t("your_order"),
+                self.model.t("order_empty")
+            )
+            return
+        if person_count <= 1:
+            messagebox.showinfo(
+                self.model.t("payment_successful"),
+                self.model.t("paid_total").format(
+                    amount=f"{self.model.get_order_total_with_tip():.2f}", currency="SEK"
+                )
+            )
+        else:
+            details = []
+            for person in self.model.orders:
+                person_total = self.model.get_order_total(person)
+                person_total_with_tip = person_total * (1 + self.model.tip_percent / 100)
+                details.append(f"{person}: €{person_total_with_tip:.2f}")
+
+            messagebox.showinfo(
+                self.model.t("payment_successful"),
+                self.model.t("each_pays_their_own").format(
+                    details="\n".join(details)
+                )
+            )
         self.model.clear_order()
         self.view.refresh_order()
 
@@ -997,6 +1083,16 @@ class MenuController:
         ):
             self.model.clear_order()
             self.view.refresh_order()
+
+    def increment_people(self):
+        """Add a new seat/person to the group order."""
+        self.model.add_seat()
+        self.view.refresh_order()
+
+    def decrement_people(self):
+        """Remove the last seat/person from the group order."""
+        self.model.remove_last_seat()
+        self.view.refresh_order()
 
     def switch_person(self, person):
         """
@@ -1413,6 +1509,22 @@ class MenuView:
         self.group_frame = tk.Frame(self.order_header, bg=self.COLORS["bg_panel"])
         self.group_frame.pack(side=tk.RIGHT)
 
+        self.people_minus_btn = tk.Button(
+            self.group_frame, text="−",
+            font=("Arial", 10, "bold"),
+            bg=self.COLORS["btn_bg"], fg=self.COLORS["text_light"],
+            relief=tk.FLAT, cursor="hand2", width=3,
+            command=self.controller.decrement_people
+        )
+        self.people_minus_btn.pack(side=tk.RIGHT, padx=2)
+
+        self.people_count_label = tk.Label(
+            self.group_frame, text=f"{self.model.t('people')}: {self.model.get_people_count()}",
+            font=("Arial", 10, "bold"),
+            bg=self.COLORS["bg_panel"], fg=self.COLORS["text_light"]
+        )
+        self.people_count_label.pack(side=tk.RIGHT, padx=6)
+
         self.add_person_btn = tk.Button(
             self.group_frame, text=self.model.t("add_person"), # Fixed: Using dynamic text instead of static "+"
             font=("Arial", 10, "bold"),
@@ -1422,7 +1534,7 @@ class MenuView:
             font=("Arial", 10, "bold"),
             bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
             relief=tk.FLAT, cursor="hand2", width=3,
-            command=self._show_add_person_dialog
+            command=self.controller.increment_people
         )
         self.add_person_btn.pack(side=tk.RIGHT, padx=2)
 
@@ -1517,15 +1629,25 @@ class MenuView:
         btn_frame = tk.Frame(self.bottom_frame, bg=self.COLORS["bg_panel"])
         btn_frame.pack(fill=tk.X)
 
-        self.place_order_btn = tk.Button(
-            btn_frame, text="Place Order",
+        self.pay_all_btn = tk.Button(
+            btn_frame, text="Pay All",
             font=("Arial", 12, "bold"),
             bg=self.COLORS["success"], fg=self.COLORS["white"],
             activebackground="#219a52",
             relief=tk.FLAT, cursor="hand2", padx=16, pady=8,
-            command=self.controller.place_order
+            command=self.controller.pay_all
         )
-        self.place_order_btn.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 4))
+        self.pay_all_btn.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 4))
+
+        self.split_bill_btn = tk.Button(
+            btn_frame, text="Split Bill",
+            font=("Arial", 12, "bold"),
+            bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
+            activebackground="#d4a017",
+            relief=tk.FLAT, cursor="hand2", padx=16, pady=8,
+            command=self.controller.split_bill
+        )
+        self.split_bill_btn.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(4, 4))
 
         self.clear_order_btn = tk.Button(
             btn_frame, text="Clear",
@@ -2459,6 +2581,10 @@ class MenuView:
         total = self.model.get_order_total_with_tip()
         tip = self.model.tip_percent
 
+        self.people_count_label.configure(
+            text=f"{self.model.t('people')}: {self.model.get_people_count()}"
+        )
+
         self.subtotal_label.configure(
             text=f"{self.model.t('subtotal')}: €{subtotal:.2f}"
         )
@@ -2481,10 +2607,11 @@ class MenuView:
 
         # Update button text
         self.tip_label.configure(text=self.model.t("tip") + ":")
-        self.place_order_btn.configure(text=self.model.t("place_order"))
+        self.pay_all_btn.configure(text=self.model.t("pay_all"))
+        self.split_bill_btn.configure(text=self.model.t("split_bill"))
         self.clear_order_btn.configure(text=self.model.t("clear_order"))
         self.order_title.configure(text=self.model.t("your_order"))
-        self.add_person_btn.configure(text=self.model.t("add_person"))
+        self.people_count_label.configure(text=f"{self.model.t('people')}: {self.model.get_people_count()}")
 
 
 # =============================================================================
