@@ -1386,9 +1386,9 @@ class MenuView:
 
         # --- 3. Menu Items Scroll Area (Existing Vertical Code) ---
         # Filter bar
-        self.filter_frame = tk.Frame(self.menu_frame, bg=self.COLORS["bg_panel"], pady=6, padx=8)
-        self.filter_frame.grid(row=0, column=0, sticky="ew")
-        self._build_filters()
+        # self.filter_frame = tk.Frame(self.menu_frame, bg=self.COLORS["bg_panel"], pady=6, padx=8)
+        # self.filter_frame.grid(row=0, column=0, sticky="ew")
+        # self._build_filters()
 
         # Category buttons row
         self.cat_frame = tk.Frame(self.menu_frame, bg=self.COLORS["bg_dark"], pady=4, padx=4)
@@ -1530,10 +1530,10 @@ class MenuView:
             font=("Arial", 10, "bold"),
             bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
             relief=tk.FLAT, cursor="hand2", padx=10, # Fixed: Removed fixed width=3 and added padx=10 for dynamic resizing
-            self.group_frame, text="+",
-            font=("Arial", 10, "bold"),
-            bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
-            relief=tk.FLAT, cursor="hand2", width=3,
+            # self.group_frame, text="+",
+            # font=("Arial", 10, "bold"),
+            # bg=self.COLORS["accent_gold"], fg=self.COLORS["bg_dark"],
+            # relief=tk.FLAT, cursor="hand2", width=3,
             command=self.controller.increment_people
         )
         self.add_person_btn.pack(side=tk.RIGHT, padx=2)
@@ -1787,17 +1787,6 @@ class MenuView:
         """
         lang = self.model.current_language
         is_special = item.get("category") == "todays_special"
-        Render a single menu item as a styled card with:
-        - Name, price, description
-        - Dietary tags as colored badges
-        - Allergen and origin info
-        - Alcohol warning if applicable
-        - Add button and drag support
-        
-        Args:
-            item (dict): Menu item data
-        """
-        lang = self.model.current_language
         
         card = tk.Frame(
             self.menu_inner, bg=self.COLORS["bg_card"],
@@ -1808,17 +1797,6 @@ class MenuView:
         card.pack(fill=tk.X, padx=8, pady=4)
 
         # Header Row: Name, Price and Add Button
-            highlightbackground=self.COLORS["bg_panel"],
-            highlightthickness=1
-        )
-        card.pack(fill=tk.X, padx=8, pady=4)
-
-        # Make card draggable
-        card.bind("<ButtonPress-1>", lambda e, i=item: self._on_drag_start(e, i))
-        card.bind("<B1-Motion>", self._on_drag_motion)
-        card.bind("<ButtonRelease-1>", self._on_drag_end)
-
-        # Top row: name + price
         top = tk.Frame(card, bg=self.COLORS["bg_card"])
         top.pack(fill=tk.X)
 
@@ -1834,30 +1812,6 @@ class MenuView:
             top, text="+", font=("Arial", 12, "bold"),
             bg=self.COLORS["success"], fg=self.COLORS["white"],
             activebackground="#219a52", relief=tk.FLAT, cursor="hand2", width=3,
-            top, text=name_text,
-            font=("Georgia", 13, "bold"),
-            bg=self.COLORS["bg_card"], fg=self.COLORS["text_light"],
-            anchor="w", cursor="hand2"
-        )
-        name_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        name_label.bind("<ButtonPress-1>", lambda e, i=item: self._on_drag_start(e, i))
-        name_label.bind("<B1-Motion>", self._on_drag_motion)
-        name_label.bind("<ButtonRelease-1>", self._on_drag_end)
-
-        price_label = tk.Label(
-            top, text=f"€{item['price']:.2f}",
-            font=("Georgia", 13, "bold"),
-            bg=self.COLORS["bg_card"], fg=self.COLORS["text_gold"]
-        )
-        price_label.pack(side=tk.RIGHT)
-
-        # Add button (alternative to drag)
-        add_btn = tk.Button(
-            top, text="+",
-            font=("Arial", 12, "bold"),
-            bg=self.COLORS["success"], fg=self.COLORS["white"],
-            activebackground="#219a52",
-            relief=tk.FLAT, cursor="hand2", width=3,
             command=lambda i=item: self.controller.add_item(i)
         )
         add_btn.pack(side=tk.RIGHT, padx=(8, 0))
@@ -2331,12 +2285,6 @@ class MenuView:
         Update floating drag label position and highlight drop target.
         """
         if hasattr(self, "_drag_label") and self._drag_label:
-        Update the floating drag label position during drag.
-        
-        Args:
-            event: Tkinter motion event
-        """
-        if hasattr(self, '_drag_label') and self._drag_label:
             x = event.x_root - self.root.winfo_rootx()
             y = event.y_root - self.root.winfo_rooty()
             self._drag_label.place(x=x + 10, y=y + 10)
@@ -2355,14 +2303,6 @@ class MenuView:
         End drag — add item if dropped over order area.
         """
         if hasattr(self, "_drag_label") and self._drag_label:
-    def _on_drag_end(self, event):
-        """
-        End drag — if dropped over the order panel, add the item to order.
-        
-        Args:
-            event: Tkinter button release event
-        """
-        if hasattr(self, '_drag_label') and self._drag_label:
             self._drag_label.destroy()
             self._drag_label = None
 
@@ -2379,15 +2319,6 @@ class MenuView:
         self._drag_data["item"] = None
         self._drag_data["x"] = None
         self._drag_data["y"] = None
-        # Check if dropped on order panel
-        drop_x = event.x_root
-        order_x = self.order_frame.winfo_rootx()
-        order_w = self.order_frame.winfo_width()
-        
-        if drop_x >= order_x and drop_x <= order_x + order_w:
-            self.controller.add_item(self._drag_data["item"])
-
-        self._drag_data["item"] = None
 
     def _on_order_drop(self, event):
         """Handle click on order panel (for potential drop target feedback)."""
