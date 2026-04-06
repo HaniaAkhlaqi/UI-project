@@ -11,14 +11,14 @@ Architecture: Model-View-Controller (MVC)
 Features:
 - Full menu with categories (starters, soups, mains, desserts, beverages)
 - Set meals (2-course, 3-course) and Today's Special
-- Dietary filters: vegan, vegetarian, gluten-free, lactose-free, non-alcoholic
-- Allergen info and country of origin
+- Dietary filters: vegan, vegetarian, gluten-free, lactose-free, non-alcoholic, seafood
+- Allergen info and country of origin of the dish
 - Single & group ordering with table management
 - Drag & drop to add items to order (with button alternative)
 - 3 dynamically changeable languages (English, German, Chinese)
 - Call for service button
 - Order cost display with optional tipping
-- Responsive design for tablet (9") and phone screens
+- Responsive design for tablet (9") and phone screens 
 
 Author: Generated for UI Programming Course Project- Baseline lovable Hi-Fi prototype
 """
@@ -175,6 +175,29 @@ class MenuModel:
                 "price": 5.90, "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free"],
                 "allergens": ["soy"], "origin": "Japan", "contains_alcohol": False
             },
+            {
+                "id": "l5", "category": "soups",
+                "name": {"en": "Beijing Hot & Sour Soup", "de": "Peking-Suppe (Scharf-Sauer)", "zh": "北京酸辣汤"},
+                "description": {
+                    "en": "Spicy and sour soup with egg, bamboo, and wood-ear mushrooms",
+                    "de": "Scharf-saure Suppre mit Ei, Bambus und Morcheln",
+                    "zh": "辣味北京酸辣蛋花汤"
+                },
+                "price": 8.50, "tags": ["vegetarian", "lactose-free"],
+                "allergens": ["egg", "soy"], "origin": "China", "contains_alcohol": False
+            },
+            {
+                "id": "l6", "category": "soups",
+                "name": {"en": "Shrimp & Chicken Wonton Soup", "de": "Garnelen-Hähnchen-Wonton-Suppe", "zh": "鸡肉虾仁云吞汤"},
+                "description": {
+                    "en": "Handmade wontons with shrimp and chicken filling in a clear broth",
+                    "de": "Handgemachte Wontons mit Garnelen- und Hühnchenfüllung in klarer Brühe",
+                    "zh": "手工鸡肉虾仁馄饨清汤"
+                },
+                "price": 8.00, "tags": ["seafood"],
+                "allergens": ["shellfish", "gluten"], "origin": "China", "contains_alcohol": False
+            },
+
             # === MAIN COURSES ===
             {
                 "id": "m1", "category": "mains",
@@ -264,6 +287,40 @@ class MenuModel:
                 "price": 13.50, "tags": ["vegan", "vegetarian", "lactose-free"],
                 "allergens": ["soy"], "origin": "China", "contains_alcohol": False
             },
+            {
+                "id": "m9", "category": "mains",
+                "name": {"en": "Shui Zhu Fish", "de": "Shui Zhu Fisch", "zh": "水煮鱼"},
+                "description": {
+                    "en": "Tender fish fillets poached in a spicy broth with Sichuan pepper, dried chili, and coriander",
+                    "de": "Zarte Fischfilets in scharfer Brühe mit Sichuanpfeffer, Chili und Koriander",
+                    "zh": "麻辣水煮鱼配干辣椒和香菜"
+                },
+                "price": 22.90, "tags": ["seafood", "gluten-free", "lactose-free"],
+                "allergens": ["fish"], "origin": "China", "contains_alcohol": False
+            },
+            {
+                "id": "m10", "category": "mains",
+                "name": {"en": "Kung Pao Prawns", "de": "Kung-Pao-Garnelen", "zh": "宫保虾仁"},
+                "description": {
+                    "en": "Succulent prawns in a sweet and acidic sauce with crunchy peanuts",
+                    "de": "Saftige Garnelen in süß-säuerlicher Sauce mit knackigen Erdnüssen",
+                    "zh": "宫保大虾配花生和酸甜酱"
+                },
+                "price": 23.50, "tags": ["seafood", "lactose-free"],
+                "allergens": ["shellfish", "peanuts"], "origin": "China", "contains_alcohol": False
+            },
+            {
+                "id": "m11", "category": "mains",
+                "name": {"en": "Mixed Seafood Claypot", "de": "Meeresfrüchte-Topf", "zh": "海鲜砂锅"},
+                "description": {
+                    "en": "A rich assortment of seafood simmered with vegetables in a traditional clay pot",
+                    "de": "Vielfältige Meeresfrüchte mit Gemüse im traditionellen Tontopf geschmort",
+                    "zh": "传统海鲜砂锅配时令蔬菜"
+                },
+                "price": 25.90, "tags": ["seafood", "lactose-free"],
+                "allergens": ["shellfish", "fish", "molluscs"], "origin": "China", "contains_alcohol": False
+            },
+
             # === DESSERTS ===
             {
                 "id": "d1", "category": "desserts",
@@ -430,6 +487,24 @@ class MenuModel:
                 },
                 "price": 3.90, "tags": ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"],
                 "allergens": [], "origin": "USA", "contains_alcohol": False
+            },{
+                "id": "ts1",
+                "category": "todays_special",
+                "name": {
+                    "en": "🌟 Peking Duck Feast for Two",
+                    "de": "🌟 Peking-Enten-Festmahl für Zwei",
+                    "zh": "🌟 双人北京烤鸭盛宴"
+                },
+                "description": {
+                    "en": "Whole Peking duck with pancakes, hoisin sauce, cucumber, scallions, and jasmine tea for two.",
+                    "de": "Ganze Peking-Ente mit Pfannkuchen, Hoisin-Sauce, Gurke, Frühlingszwiebeln und Jasmintee für zwei Personen.",
+                    "zh": "整只北京烤鸭配薄饼、海鲜酱、黄瓜、葱和双人茉莉花茶。"
+                },
+                "price": 58.90,
+                "tags": ["non-alcoholic"],
+                "allergens": ["gluten"],
+                "origin": "China",
+                "contains_alcohol": False
             },
         ]
 
@@ -566,7 +641,7 @@ class MenuModel:
             "en": {
                 "app_title": "Gasthaus Peking Duck",
                 "app_subtitle": "German-Chinese Fusion Cuisine",
-                "starters": "Starters", "soups": "Soups & Light Courses",
+                "starters": "Starters", "soups": "Soups",
                 "mains": "Main Courses", "desserts": "Desserts",
                 "beverages": "Beverages", "set_meals": "Set Meals",
                 "todays_special": "Today's Special",
@@ -595,11 +670,12 @@ class MenuModel:
                 "clear_confirm_msg": "This will remove all items from the order.",
                 "person_exists": "This person already exists in the order.",
                 "enter_name": "Please enter a name.",
+                "seafood": "Seafood",
             },
             "de": {
                 "app_title": "Gasthaus Peking Duck",
                 "app_subtitle": "Deutsch-Chinesische Fusionsküche",
-                "starters": "Vorspeisen", "soups": "Suppen & Leichte Gerichte",
+                "starters": "Vorspeisen", "soups": "Suppen ",
                 "mains": "Hauptgerichte", "desserts": "Nachspeisen",
                 "beverages": "Getränke", "set_meals": "Menüs",
                 "todays_special": "Tagesangebot",
@@ -628,6 +704,7 @@ class MenuModel:
                 "clear_confirm_msg": "Dies entfernt alle Artikel aus der Bestellung.",
                 "person_exists": "Diese Person existiert bereits in der Bestellung.",
                 "enter_name": "Bitte geben Sie einen Namen ein.",
+                "seafood": "Meeresfrüchte",
             },
             "zh": {
                 "app_title": "北京烤鸭餐馆",
@@ -661,6 +738,7 @@ class MenuModel:
                 "clear_confirm_msg": "这将删除订单中的所有菜品。",
                 "person_exists": "此成员已存在于订单中。",
                 "enter_name": "请输入姓名。",
+                "seafood": "海鲜",
             },
         }
 
@@ -1251,7 +1329,7 @@ class MenuView:
         self.filter_label.pack(side=tk.LEFT, padx=(0, 8))
 
         self.filter_buttons = {}
-        filter_tags = ["vegan", "vegetarian", "gluten-free", "lactose-free", "non-alcoholic"]
+        filter_tags = ["vegan", "vegetarian", "gluten-free", "lactose-free", "seafood", "non-alcoholic"]
         for tag in filter_tags:
             btn = tk.Button(
                 self.filter_frame, text=tag,
@@ -1551,11 +1629,17 @@ class MenuView:
 
     def _render_menu_card(self, item):
         """
-        Render a single menu item as a styled, fully responsive card.
-        Includes dietary tags, allergens, and origin info.
+        Render a single menu item as a styled card with:
+        - Name, price, description
+        - Dietary tags as colored badges
+        - Allergen and origin info
+        - Alcohol warning if applicable
+        - Add button and drag support
+        
+        Args:
+            item (dict): Menu item data
         """
         lang = self.model.current_language
-        is_special = item.get("category") == "todays_special"
         
         card = tk.Frame(
             self.menu_inner, bg=self.COLORS["bg_card"],
